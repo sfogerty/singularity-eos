@@ -15,6 +15,7 @@
 cmake_minimum_required(VERSION 3.14)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
+
 # options
 option (SINGULARITY_USE_HDF5 "Pull in hdf5" ON)
 option (SINGULARITY_USE_FORTRAN "Enable fortran bindings" ON)
@@ -23,6 +24,7 @@ option (SINGULARITY_USE_EOSPAC "Pull in eospac" OFF)
 option (SINGULARITY_USE_CUDA "Enable cuda support" OFF)
 option (SINGULARITY_USE_KOKKOSKERNELS
   "Use kokkos-kernels for linear algebra" OFF)
+option (SINGULARITY_BUILD_PYTHON "Compile Python bindings" OFF)
 option (SINGULARITY_BUILD_TESTS "Compile tests" OFF)
 option (SINGULARITY_BUILD_EXAMPLES "Compile examples" OFF)
 option (SINGULARITY_BUILD_SESAME2SPINER "Compile sesame2spiner" OFF)
@@ -40,6 +42,11 @@ option (SINGULARITY_USE_TRUE_LOG_GRIDDING "Use grids that conform to log spacing
 if (SINGULARITY_SUBMODULE_MODE)
   set(SINGULARITY_BETTER_DEBUG_FLAGS OFF CACHE BOOL "" FORCE)
   set(SINGULARITY_HIDE_MORE_WARNINGS ON CACHE BOOL "" FORCE)
+endif()
+
+if (SINGULARITY_BUILD_PYTHON)
+  # need position independent code for Python shared library
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
 
@@ -333,6 +340,10 @@ endif()
 
 if (SINGULARITY_BUILD_EXAMPLES)
   add_subdirectory(${PROJECT_SOURCE_DIR}/example)
+endif()
+
+if (SINGULARITY_BUILD_PYTHON)
+  add_subdirectory(${PROJECT_SOURCE_DIR}/python)
 endif()
 
 # These are always needed.
